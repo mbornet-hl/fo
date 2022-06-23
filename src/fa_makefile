@@ -1,0 +1,7 @@
+#
+#	@(#)	[MB] fa_makefile	Version 1.1 du 22/06/23 - 
+#
+
+
+fo			: fa_fmtout.c
+			$(CC) -o fo fa_fmtout.c
