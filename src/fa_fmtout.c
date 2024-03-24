@@ -2,7 +2,7 @@
  *   Command "fo" : Format Output
  *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
- *	@(#)	[MB] fa_fmtout.c	Version 1.5 du 24/03/24 - 
+ *	@(#)	[MB] fa_fmtout.c	Version 1.6 du 24/03/24 - 
  */
 
 #include <stdio.h>
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
                     _matching_str[_e -_s + 1]   = 0;
 
                     if (_debug) {
-                         printf("%s %10d : [%3d] '%s'\n", _debug_msg, _idx[_j], strlen(_matching_str), _matching_str);
+                         printf("%s %10d : [%3ld] '%s'\n", _debug_msg, _idx[_j], strlen(_matching_str), _matching_str);
                     }
                     else {
 					if (_matching_str[0] != '\0') {
