@@ -2,7 +2,7 @@
  *   Command "fo" : Format Output
  *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
- *   @(#)  [MB] fa_fmtout.c Version 1.4 du 22/06/24 - 
+ *	@(#)	[MB] fa_fmtout.c	Version 1.5 du 24/03/24 - 
  */
 
 #include <stdio.h>
@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
 {
 #define   CR_SIZE             (65536)
      char                     *_progname, *_regexp, *_lengths, _line[CR_SIZE + 1],
-                               _errbuf[256], _matching_str[CR_SIZE + 1], *_ptr;
+                               _errbuf[256], _matching_str[CR_SIZE + 1], *_ptr,
+						*_debug_msg;
      int                       _i, _j, _n, _e, _s, _off, _error, _length,
                                _idx[16];
      int                       _debug;
@@ -50,6 +51,7 @@ int main(int argc, char *argv[])
 
      _progname                = argv[0];
      _debug                   = 0;
+	_debug_msg			= "[DEBUG]";
 
      if (argc != 3) {
           fa_usage(_progname);
@@ -60,8 +62,8 @@ int main(int argc, char *argv[])
      _lengths                 = argv[2];
 
      if (_debug) {
-          printf("regexp  = '%s'\n", _regexp);
-          printf("lenghts = '%s'\n", _lengths);
+          printf("%s regexp  = '%s'\n", _debug_msg, _regexp);
+          printf("%s lengths = '%s'\n", _debug_msg, _lengths);
      }
 
      _i                       = 1;
@@ -96,7 +98,7 @@ int main(int argc, char *argv[])
           }
           if (regexec(&_re->reg[_i], _line + _off, _nmatch, _pmatch, _eflags) == 0) {
                if (_debug) {
-                    printf("Match    : '%s'\n", _line);
+                    printf("%s Match    : '%s'\n", _debug_msg, _line);
                }
                for (_j = 1; _j < 16; _j++) {
                     _s   = _pmatch[_j].rm_so;
@@ -106,7 +108,7 @@ int main(int argc, char *argv[])
                     _matching_str[_e -_s + 1]   = 0;
 
                     if (_debug) {
-                         printf("%10d : [%3d] '%s'\n", _idx[_j], strlen(_matching_str), _matching_str);
+                         printf("%s %10d : [%3d] '%s'\n", _debug_msg, _idx[_j], strlen(_matching_str), _matching_str);
                     }
                     else {
 					if (_matching_str[0] != '\0') {
@@ -118,8 +120,11 @@ int main(int argc, char *argv[])
           }
           else {
                if (_debug) {
-                    printf("NO MATCH : '%s'\n", _line);
+                    printf("%s NO MATCH : '%s'\n", _debug_msg, _line);
                }
+			else {
+				printf("%s\n", _line);
+			}
           }
      }
      return 0;
