@@ -2,7 +2,7 @@
  *   Command "fo" : Format Output
  *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
- *	@(#)	[MB] fa_fmtout.c	Version 1.6 du 24/03/24 - 
+ *	@(#)	[MB] fa_fmtout.c	Version 1.7 du 24/04/06 - 
  */
 
 #include <stdio.h>
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
                                _errbuf[256], _matching_str[CR_SIZE + 1], *_ptr,
 						*_debug_msg;
      int                       _i, _j, _n, _e, _s, _off, _error, _length,
-                               _idx[16];
+                               _idx[16], _max_idx;
      int                       _debug;
      struct fa_re_desc        *_re, _reg_struct;
      size_t                    _nmatch;
@@ -62,17 +62,31 @@ int main(int argc, char *argv[])
      _lengths                 = argv[2];
 
      if (_debug) {
-          printf("%s regexp  = '%s'\n", _debug_msg, _regexp);
-          printf("%s lengths = '%s'\n", _debug_msg, _lengths);
+          fprintf(stderr, "%s regexp  = '%s'\n", _debug_msg, _regexp);
+          fprintf(stderr, "%s lengths = '%s'\n", _debug_msg, _lengths);
+		fprintf(stderr, "%s\n", _debug_msg);
      }
 
      _i                       = 1;
      for (_ptr = strtok(_lengths, ","); _ptr != NULL; _ptr = strtok(NULL,",")) {
-//        printf("%s\n", _ptr);
+#if 0
+		if (_debug) {
+			fprintf(stderr, "%s%s\n", _debug_msg, _ptr);
+		}
+#endif	/* 0 */
+
           _idx[_i]                 = atoi(_ptr);
-//        printf("    %10d\n", _idx[_i]);
+
+		if (_debug) {
+			fprintf(stderr, "%s    %10d\n", _debug_msg, _idx[_i]);
+		}
           _i++;
      }
+	_max_idx				= _i;
+
+     if (_debug) {
+		fprintf(stderr, "%s\n", _debug_msg);
+	}
 
      _nmatch                  = sizeof(_pmatch) / sizeof(_pmatch[0]);
 
@@ -98,9 +112,9 @@ int main(int argc, char *argv[])
           }
           if (regexec(&_re->reg[_i], _line + _off, _nmatch, _pmatch, _eflags) == 0) {
                if (_debug) {
-                    printf("%s Match    : '%s'\n", _debug_msg, _line);
+                    fprintf(stderr, "%s Match    : '%s'\n", _debug_msg, _line);
                }
-               for (_j = 1; _j < 16; _j++) {
+               for (_j = 1; _j < _max_idx; _j++) {
                     _s   = _pmatch[_j].rm_so;
                     _e   = _pmatch[_j].rm_eo - 1;
 
@@ -108,23 +122,22 @@ int main(int argc, char *argv[])
                     _matching_str[_e -_s + 1]   = 0;
 
                     if (_debug) {
-                         printf("%s %10d : [%3ld] '%s'\n", _debug_msg, _idx[_j], strlen(_matching_str), _matching_str);
+                         fprintf(stderr, "%s %10d : [%3ld] '%s'\n", _debug_msg, _idx[_j], strlen(_matching_str), _matching_str);
+					printf("%s[%*s]", _j == 1 ? "" : " ", _idx[_j], _matching_str);
                     }
                     else {
-					if (_matching_str[0] != '\0') {
+					// if (_matching_str[0] != '\0') {
 						printf("%s%*s", _j == 1 ? "" : " ", _idx[_j], _matching_str);
-					}
+					// }
                     }
                }
                printf("\n");
           }
           else {
                if (_debug) {
-                    printf("%s NO MATCH : '%s'\n", _debug_msg, _line);
+                    fprintf(stderr, "%s NO MATCH : '%s'\n", _debug_msg, _line);
                }
-			else {
-				printf("%s\n", _line);
-			}
+			printf("%s\n", _line);
           }
      }
      return 0;
